@@ -1,0 +1,6 @@
+/worker
+/demo_procesos
+/minioslab
+*.o
+*.ova
+EOF
