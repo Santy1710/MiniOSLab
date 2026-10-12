@@ -1,3 +1,4 @@
+#include "pthreads.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
@@ -5,21 +6,9 @@
 #include <time.h>
 #include <string.h>
 
-// Variable global para la prueba de sincronizacion (--unsafe / --safe)
 long long contador_global = 0;
 pthread_mutex_t mutex_contador;
 
-typedef struct {
-    long long inicio;
-    long long fin;
-    long long suma_parcial;
-} RangoHilo;
-
-typedef struct {
-    int incrementos;
-} SyncArgs;
-
-// --- CARGA COMPUTACIONAL: Suma de rango ---
 void *ejecutar_suma(void *arg) {
     RangoHilo *rango = (RangoHilo *)arg;
     rango->suma_parcial = 0;
@@ -29,21 +18,19 @@ void *ejecutar_suma(void *arg) {
     return NULL;
 }
 
-// --- MODO UNSAFE: Sin Mutex (Condicion de carrera) ---
 void *incrementar_unsafe(void *arg) {
     SyncArgs *args = (SyncArgs *)arg;
     for (int i = 0; i < args->incrementos; i++) {
-        contador_global++; // Seccion critica no protegida
+        contador_global++;
     }
     return NULL;
 }
 
-// --- MODO SAFE: Con Mutex ---
 void *incrementar_safe(void *arg) {
     SyncArgs *args = (SyncArgs *)arg;
     for (int i = 0; i < args->incrementos; i++) {
         pthread_mutex_lock(&mutex_contador);
-        contador_global++; // Seccion critica protegida
+        contador_global++;
         pthread_mutex_unlock(&mutex_contador);
     }
     return NULL;
@@ -55,12 +42,10 @@ double medir_tiempo_sec(void) {
     return ts.tv_sec + ts.tv_nsec * 1e-9;
 }
 
-int main(int argc, char *argv[]) {
-    // 1. Deteccion automatica de CPUs en Linux
+int ejecutar_pthreads(int argc, char *argv[]) {
     int n_cpus = sysconf(_SC_NPROCESSORS_ONLN);
     if (n_cpus <= 0) n_cpus = 1;
 
-    // MODO UNSAFE / SAFE
     if (argc > 1 && (strcmp(argv[1], "--unsafe") == 0 || strcmp(argv[1], "--safe") == 0)) {
         int es_safe = (strcmp(argv[1], "--safe") == 0);
         int num_hilos = 8;
@@ -93,7 +78,6 @@ int main(int argc, char *argv[]) {
         return 0;
     }
 
-    // MODO CARGA PARALELA (1, N y 2N hilos)
     printf("=== PRUEBA DE CARGA PARALELA (Pthreads) ===\n");
     printf("CPUs detectadas (N): %d\n\n", n_cpus);
 
