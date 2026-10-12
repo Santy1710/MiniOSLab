@@ -1,9 +1,9 @@
+#define _POSIX_C_SOURCE 200809L
 #include <stdio.h>
 #include <pthread.h>
 #include <unistd.h>
 #include <errno.h>
 #include <time.h>
-
 #include "deadlock.h"
 #include <time.h>
 
