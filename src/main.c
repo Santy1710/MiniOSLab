@@ -1,12 +1,22 @@
 #include <stdio.h>
+<<<<<<< HEAD
 #include <string.h>
 #include <stdlib.h>
+=======
+#include <unistd.h>
+#include "memoria.h"
+
+#include <stdio.h>
+#include <unistd.h>
+#include "memoria.h"
+>>>>>>> origin/SantiagoVega-memoria
 
 #include "scheduler.h"
 #include "deadlock.h"
 
 int main(int argc, char *argv[]){
     printf("MiniOSLab iniciado correctamente.\n");
+<<<<<<< HEAD
     
     /*Aqui se hace el deadlock*/
     if (argc == 2 && strcmp(argv[1], "--deadlock-test") == 0){
@@ -54,5 +64,13 @@ int main(int argc, char *argv[]){
     printf("./minioslab trabajos.txt --scheduler rr --quantum N\n");
     printf("./minioslab --deadlock-test\n");
 
+=======
+
+    memory_test(10);
+
+    printf("Tamaño de página: %ld bytes\n", sysconf(_SC_PAGESIZE));
+
+    getchar();
+>>>>>>> origin/SantiagoVega-memoria
     return 0;
 }
