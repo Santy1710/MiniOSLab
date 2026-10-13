@@ -1,30 +1,32 @@
-CC     = gcc
+
+CC = gcc
 CFLAGS = -Wall -Wextra -std=c11
 THREADS = -pthread
 
-# Archivos del programa principal.
-# Se incluyen automáticamente todos los .c de src/ (incluyendo pthreads.c)
-# y se excluyen los que tienen su propio main() individual.
-SRC     = $(filter-out src/demo_procesos.c src/worker.c,$(wildcard src/*.c))
+SRC = $(filter-out src/demo_procesos.c src/worker.c,$(wildcard src/*.c))
 HEADERS = $(wildcard src/*.h)
 
-.PHONY: all clean test-memory test-fcfs test-rr test-deadlock test-pthreads
+.PHONY: all clean test-memory test-fcfs test-rr test-deadlock test-pthreads test-processes
 
-# Compilación principal de minioslab
-all: minioslab
+all: minioslab demo_procesos worker
 
 minioslab: $(SRC) $(HEADERS)
 	$(CC) $(CFLAGS) $(SRC) -o minioslab $(THREADS) -lm
 
-# Pruebas individuales de cada módulo
+worker: src/worker.c
+	$(CC) $(CFLAGS) src/worker.c -o worker -lm
+
+demo_procesos: src/demo_procesos.c src/procesos.c src/procesos.h worker
+	$(CC) $(CFLAGS) src/demo_procesos.c src/procesos.c -o demo_procesos $(THREADS)
+
 test-memory: minioslab
 	./minioslab --memory-test
 
 test-fcfs: minioslab
-	./minioslab trabajos.txt --scheduler fcfs
+	./minioslab data/scheduler.txt --scheduler fcfs
 
 test-rr: minioslab
-	./minioslab trabajos.txt --scheduler rr --quantum 2
+	./minioslab data/scheduler.txt --scheduler rr --quantum 2
 
 test-deadlock: minioslab
 	./minioslab --deadlock-test
@@ -33,6 +35,9 @@ test-pthreads: minioslab
 	./minioslab --unsafe
 	./minioslab --safe
 
-# Limpieza de ejecutables
+test-processes: demo_procesos
+	./demo_procesos data/trabajos.txt --seq
+	./demo_procesos data/trabajos.txt --par
+
 clean:
 	rm -f minioslab demo_procesos worker

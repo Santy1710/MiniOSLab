@@ -81,15 +81,11 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    if (argc == 2 && strcmp(argv[1], "--unsafe") == 0) {
-        ejecutar_pthreads_unsafe();
-        return 0;
-    }
-
-    if (argc == 2 && strcmp(argv[1], "--safe") == 0) {
-        ejecutar_pthreads_safe();
-        return 0;
-    }
+    if (argc == 2 &&
+    (strcmp(argv[1], "--unsafe") == 0 ||
+     strcmp(argv[1], "--safe") == 0)) {
+    return ejecutar_pthreads(argc, argv);
+}
 
     if (argc >= 4 &&
         strcmp(argv[2], "--scheduler") == 0) {
