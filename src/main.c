@@ -1,9 +1,9 @@
-
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 
+#include "pthreads.h"
 #include "memoria.h"
 #include "scheduler.h"
 #include "deadlock.h"
@@ -81,6 +81,16 @@ int main(int argc, char *argv[])
         return 0;
     }
 
+    if (argc == 2 && strcmp(argv[1], "--unsafe") == 0) {
+        ejecutar_pthreads_unsafe();
+        return 0;
+    }
+
+    if (argc == 2 && strcmp(argv[1], "--safe") == 0) {
+        ejecutar_pthreads_safe();
+        return 0;
+    }
+
     if (argc >= 4 &&
         strcmp(argv[2], "--scheduler") == 0) {
 
@@ -119,6 +129,8 @@ int main(int argc, char *argv[])
     printf("Uso:\n");
     printf("./minioslab data/scheduler.txt --scheduler fcfs\n");
     printf("./minioslab data/scheduler.txt --scheduler rr --quantum N\n");
+    printf("./minioslab --unsafe\n");
+    printf("./minioslab --safe\n");
     printf("./minioslab --deadlock-test\n");
     printf("./minioslab --memory-test\n");
 

@@ -1,22 +1,22 @@
-
-CC = gcc
+CC     = gcc
 CFLAGS = -Wall -Wextra -std=c11
 THREADS = -pthread
 
 # Archivos del programa principal.
-# Excluimos los programas que tienen su propio main().
-SRC = $(filter-out src/demo_procesos.c src/worker.c,$(wildcard src/*.c))
+# Se incluyen automáticamente todos los .c de src/ (incluyendo pthreads.c)
+# y se excluyen los que tienen su propio main() individual.
+SRC     = $(filter-out src/demo_procesos.c src/worker.c,$(wildcard src/*.c))
 HEADERS = $(wildcard src/*.h)
 
-.PHONY: all clean test-memory test-fcfs test-rr test-deadlock
+.PHONY: all clean test-memory test-fcfs test-rr test-deadlock test-pthreads
 
-# Compilacion principal.
+# Compilación principal de minioslab
 all: minioslab
 
 minioslab: $(SRC) $(HEADERS)
-	$(CC) $(CFLAGS) $(SRC) -o minioslab $(THREADS)
+	$(CC) $(CFLAGS) $(SRC) -o minioslab $(THREADS) -lm
 
-# Pruebas individuales.
+# Pruebas individuales de cada módulo
 test-memory: minioslab
 	./minioslab --memory-test
 
@@ -29,6 +29,10 @@ test-rr: minioslab
 test-deadlock: minioslab
 	./minioslab --deadlock-test
 
-# Eliminar ejecutables generados.
+test-pthreads: minioslab
+	./minioslab --unsafe
+	./minioslab --safe
+
+# Limpieza de ejecutables
 clean:
 	rm -f minioslab demo_procesos worker
