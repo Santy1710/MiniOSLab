@@ -74,12 +74,31 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    if (argc == 2 && strcmp(argv[1], "--memory-test") == 0) {
-        memory_test(10);
-        printf("Tamaño de página: %ld bytes\n",
-               sysconf(_SC_PAGESIZE));
-        return 0;
+    
+if (argc >= 2 && strcmp(argv[1], "--memory-test") == 0) {
+    int mb = 10;
+
+    if (argc == 3) {
+        char *fin;
+        long valor = strtol(argv[2], &fin, 10);
+
+        if (*argv[2] == '\0' || *fin != '\0' ||
+            valor <= 0 || valor > 1024) {
+            printf("Uso: ./minioslab --memory-test [MB]\n");
+            printf("El tamaño debe estar entre 1 y 1024 MB.\n");
+            return 1;
+        }
+
+        mb = (int)valor;
+    } else if (argc != 2) {
+        printf("Uso: ./minioslab --memory-test [MB]\n");
+        return 1;
     }
+
+    memory_test(mb);
+    return 0;
+}
+
 
     if (argc == 2 &&
     (strcmp(argv[1], "--unsafe") == 0 ||

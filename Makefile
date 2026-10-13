@@ -20,7 +20,13 @@ demo_procesos: src/demo_procesos.c src/procesos.c src/procesos.h worker
 	$(CC) $(CFLAGS) src/demo_procesos.c src/procesos.c -o demo_procesos $(THREADS)
 
 test-memory: minioslab
-	./minioslab --memory-test
+	./minioslab --memory-test 10
+
+test-memory-50: minioslab
+	./minioslab --memory-test 50
+
+test-memory-100: minioslab
+	./minioslab --memory-test 100
 
 test-fcfs: minioslab
 	./minioslab data/scheduler.txt --scheduler fcfs
